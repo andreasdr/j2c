@@ -133,16 +133,7 @@ public abstract class TransformWriter extends ASTVisitor {
 	}
 
 	protected void npcAccept(Expression expr) {
-		boolean needsNpc = needsNpc(expr);
-		if (needsNpc) {
-			npc();
-		}
-
 		expr.accept(this);
-
-		if (needsNpc) {
-			print(")");
-		}
 	}
 
 	protected void visitAll(List<? extends ASTNode> nodes) {

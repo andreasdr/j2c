@@ -23,6 +23,8 @@ public class Impl {
 	private static final String SYNCHRONIZED_HPP = "/se/arnetheduck/j2c/resources/synchronized.hpp";
 
 	private static final String i1 = TransformUtil.indent(1);
+	private static final String i2 = TransformUtil.indent(2);
+	private static final String i3 = TransformUtil.indent(3);
 
 	private final ITypeBinding type;
 	private final Transformer ctx;
@@ -156,14 +158,14 @@ public class Impl {
 
 		if (clinit != null) {
 			println(i1 + "static bool in_cl_init = false;");
-			println("struct clinit_ {");
-			println(i1 + "clinit_() {");
-			println(i1 + i1 + "in_cl_init = true;");
+			println(i1 + "struct clinit_ {");
+			println(i2 + "clinit_() {");
+			println(i2 + i1 + "in_cl_init = true;");
 			print(clinit);
-			println(i1 + "}");
-			println("};");
+			println(i2 + "}");
+			println(i1 + "};");
 			println();
-			println(i1 + "if(!in_cl_init) {");
+			println(i1 + "if (!in_cl_init) {");
 			println(i1 + i1 + "static clinit_ clinit_instance;");
 			println(i1 + "}");
 		}
@@ -268,7 +270,7 @@ public class Impl {
 					if (!vb.isEnumConstant())
 						continue;
 
-					println(i1 + "if(" + CName.of(vb) + "->toString()->equals("
+					println(i1 + "if (" + CName.of(vb) + "->toString()->equals("
 							+ arg + "))");
 					println(i1 + i1 + "return " + CName.of(vb) + ";");
 				}
@@ -425,8 +427,6 @@ public class Impl {
 		if (!deps.needsNpc()) {
 			return;
 		}
-
-		print(FileUtil.readResource(NPC_HPP));
 	}
 
 	private void printFinally() {

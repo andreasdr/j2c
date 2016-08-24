@@ -696,7 +696,7 @@ public final class TransformUtil {
 	public static String indent(int n) {
 		String ret = "";
 		for (int i = 0; i < n; i++)
-			ret += "    ";
+			ret += "\t";
 		return ret;
 	}
 

@@ -569,8 +569,7 @@ public class ImplWriter extends TransformWriter {
 							.getQualifiedName())) {
 						hardDep(tb);
 						print("(");
-						npc();
-						visits.add(new NodeInfo(node, "))->"
+						visits.add(new NodeInfo(node, ")->"
 								+ TransformUtil.reverses.get(tb
 										.getQualifiedName()) + "Value()"));
 					}
@@ -1200,7 +1199,7 @@ public class ImplWriter extends TransformWriter {
 		hardDep(eb);
 		deps.setNpc();
 		if (eb.isArray()) {
-			printi("for(auto ");
+			printi("for (auto ");
 			node.getParameter().getName().accept(this);
 			print(" : *");
 			npcAccept(expr);
@@ -1222,9 +1221,8 @@ public class ImplWriter extends TransformWriter {
 				ITypeBinding tbb = node.getAST().resolveWellKnownType(
 						TransformUtil.primitives.get(tb.getName()));
 				hardDep(tbb);
-				npc();
 				javaCast(ctx.resolve(Object.class), tbb);
-				println("_i->next()))->" + tb.getName() + "Value();");
+				println("_i->next())->" + tb.getName() + "Value();");
 			} else {
 				javaCast(ctx.resolve(Object.class), tb);
 				println("_i->next());");
@@ -1396,7 +1394,7 @@ public class ImplWriter extends TransformWriter {
 			printi();
 		}
 
-		print("if(");
+		print("if (");
 		skipIndent = false;
 
 		node.getExpression().accept(this);
@@ -1670,7 +1668,7 @@ public class ImplWriter extends TransformWriter {
 				continue;
 			}
 
-			printi("if(");
+			printi("if (");
 			printLabelName(ls.getLabel());
 			print("_continue) ");
 			if (isLabeled(loop, ls.getLabel())) {
@@ -2248,7 +2246,7 @@ public class ImplWriter extends TransformWriter {
 				wasCase = true;
 			} else {
 				if (wasCase) {
-					printi("if(");
+					printi("if (");
 					String sep = "";
 					boolean hasDefault = allCases.get(allCases.size() - 1)
 							.isDefault();

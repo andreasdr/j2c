@@ -371,13 +371,11 @@ public class CName {
 
 		if (name.endsWith("Array")) {
 			String n = name;
-			String suffix = "";
 			while (n.endsWith("Array")) {
-				suffix += "_";
 				n = n.substring(0, n.length() - "Array".length());
 			}
 
-			return name + suffix;
+			return name;
 		}
 
 		if (keywords.contains(name)) {
