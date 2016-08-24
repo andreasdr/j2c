@@ -1,3 +1,6 @@
+This is our adaption of J2C to improve automatic code compilation for the TDME->TDMECPP port
+---------------------------------------------------------------------------------------------
+
 Introduction
 --
 J2C will convert Java code into hopefully compilable C++(11) code. It works on
