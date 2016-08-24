@@ -306,14 +306,14 @@ public final class TransformUtil {
 			if ((Integer) cv == Integer.MIN_VALUE) {
 				// In C++, the part after '-' is parsed first which overflows
 				// so we do a trick
-				return "int32_t(-0x7fffffff-1)";
+				return "-0x7fffffff-1";
 			}
 
 			if (!forceType) {
 				return cv.toString();
 			}
 
-			return "int32_t(" + cv + ")";
+			return "" + cv + "";
 		}
 
 		if (cv instanceof Long) {
@@ -327,7 +327,7 @@ public final class TransformUtil {
 				return cv + "LL";
 			}
 
-			return "int64_t(" + cv + "LL)";
+			return cv + "LL";
 		}
 
 		if (cv instanceof Float) {
@@ -361,7 +361,7 @@ public final class TransformUtil {
 				return cv.toString();
 			}
 
-			return "int16_t(" + cv + ")";
+			return "" + cv + "";
 		}
 
 		return cv == null ? null : cv.toString();
