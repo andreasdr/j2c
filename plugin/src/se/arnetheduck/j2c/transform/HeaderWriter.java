@@ -349,10 +349,7 @@ public class HeaderWriter extends TransformWriter {
 				softDep((ITypeBinding) b);
 				print(CName.relative((ITypeBinding) b, type, false));
 				return false;
-			} else 
-			if (b instanceof IVariableBinding || 
-				b instanceof ITypeBinding ||
-				b instanceof IMethodBinding) {
+			} else {
 				return super.visit(node);
 			}
 		}
