@@ -31,6 +31,8 @@ import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SimpleType;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Statement;
+import org.eclipse.jdt.core.dom.TagElement;
+import org.eclipse.jdt.core.dom.TextElement;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
@@ -40,10 +42,15 @@ public class HeaderWriter extends TransformWriter {
 	private final Header header;
 	private String access;
 
+	private boolean javaDocParsing;
+	private StringBuffer javaDoc;
+
 	public HeaderWriter(IPath root, Transformer ctx, UnitInfo unitInfo,
 			TypeInfo typeInfo) {
 		super(ctx, unitInfo, typeInfo);
 		this.root = root;
+		this.javaDocParsing = false;
+		this.javaDoc = null;
 
 		access = Header.initialAccess(type);
 
@@ -182,6 +189,7 @@ public class HeaderWriter extends TransformWriter {
 						: vb.getModifiers(), access);
 
 				Object cv = TransformUtil.constexprValue(f);
+				printJavadoc();
 				printi(TransformUtil.fieldModifiers(type, modifiers, true,
 						cv != null));
 
@@ -195,6 +203,7 @@ public class HeaderWriter extends TransformWriter {
 		} else {
 			access = Header.printAccess(out, modifiers, access);
 
+			printJavadoc();
 			printi(TransformUtil.fieldModifiers(type, modifiers, true, false));
 
 			ITypeBinding tb = node.getType().resolveBinding();
@@ -217,14 +226,57 @@ public class HeaderWriter extends TransformWriter {
 
 	@Override
 	public boolean visit(Javadoc node) {
-		if (true)
-			return false;
-		printi("/** ");
+		javaDocParsing = true;
+		allocateJavaDoc();
+		jdprinti("/** ");
 		for (Iterator it = node.tags().iterator(); it.hasNext();) {
 			ASTNode e = (ASTNode) it.next();
 			e.accept(this);
 		}
-		println("\n */");
+		jdprint("\n");
+		jdprinti(" */");
+		jdprint("\n");
+		javaDocParsing = false;
+		return false;
+	}
+
+	@Override
+	public boolean visit(TextElement node) {
+		jdprint(node.getText());
+		return false;
+	}
+
+	@Override
+	public boolean visit(TagElement node) {
+		// top-level tags always begin on a new line
+		jdprint("\n");
+		jdprinti(" * ");
+		boolean previousRequiresWhiteSpace = false;
+		if (node.getTagName() != null) {
+			jdprint(node.getTagName());
+			previousRequiresWhiteSpace = true;
+		}
+		boolean previousRequiresNewLine = false;
+		for (Iterator<ASTNode> it = node.fragments().iterator(); it.hasNext();) {
+			ASTNode e = it.next();
+			// assume text elements include necessary leading and trailing
+			// whitespace
+			// but Name, MemberRef, MethodRef, and nested TagElement do not
+			// include white space
+			boolean currentIncludesWhiteSpace = (e instanceof TextElement);
+			if (previousRequiresNewLine && currentIncludesWhiteSpace) {
+				jdprint("\n");
+				jdprinti(" * ");
+			}
+			previousRequiresNewLine = currentIncludesWhiteSpace;
+			// add space if required to separate
+			if (previousRequiresWhiteSpace && !currentIncludesWhiteSpace) {
+				jdprint(" ");
+			}
+			e.accept(this);
+			previousRequiresWhiteSpace = !currentIncludesWhiteSpace
+					&& !(e instanceof TagElement);
+		}
 		return false;
 	}
 
@@ -247,7 +299,7 @@ public class HeaderWriter extends TransformWriter {
 
 		if (node.isConstructor()) {
 			access = Header.printProtected(out, access);
-
+			printJavadoc();
 			printi("void " + CName.CTOR + "(");
 			String sep = TransformUtil.printEnumCtorParams(ctx, out, type, "",
 					deps);
@@ -257,6 +309,7 @@ public class HeaderWriter extends TransformWriter {
 		} else {
 			access = Header.printAccess(out, mb, access);
 
+			printJavadoc();
 			printi(TransformUtil.methodModifiers(mb));
 			print(TransformUtil.typeParameters(node.typeParameters()));
 
@@ -288,13 +341,22 @@ public class HeaderWriter extends TransformWriter {
 
 	@Override
 	public boolean visit(SimpleName node) {
-		IBinding b = node.resolveBinding();
-		if (b instanceof ITypeBinding) {
-			softDep((ITypeBinding) b);
-			print(CName.relative((ITypeBinding) b, type, false));
-			return false;
+		if (javaDocParsing == true) {
+			jdprint(node.getIdentifier());
+		} else {
+			IBinding b = node.resolveBinding();
+			if (b instanceof ITypeBinding) {
+				softDep((ITypeBinding) b);
+				print(CName.relative((ITypeBinding) b, type, false));
+				return false;
+			} else 
+			if (b instanceof IVariableBinding || 
+				b instanceof ITypeBinding ||
+				b instanceof IMethodBinding) {
+				return super.visit(node);
+			}
 		}
-		return super.visit(node);
+		return false;
 	}
 
 	@Override
@@ -370,4 +432,28 @@ public class HeaderWriter extends TransformWriter {
 
 		return false;
 	}
+
+	public void allocateJavaDoc() {
+		javaDoc = new StringBuffer();
+		javaDoc.append("\n");
+	}
+
+	public void printJavadoc() {
+		if (javaDoc == null) return;
+		out.print(javaDoc);
+		javaDoc = null;
+	}
+
+	public void jdprint(String string) {
+		if (javaDoc == null) return;
+		javaDoc.append(string);
+	}
+
+	public void jdprinti(String string) {
+		for (int i = 0; i < indent; i++) {
+			javaDoc.append("\t");
+		}
+		javaDoc.append(string);
+	}
+
 }
