@@ -58,32 +58,36 @@ public class HeaderWriter extends TransformWriter {
 	}
 
 	public void write(AnnotationTypeDeclaration node) throws Exception {
-		writeType(node.bodyDeclarations());
+		writeType(node.bodyDeclarations(), "");
 	}
 
 	public void write(AnonymousClassDeclaration node) throws Exception {
-		writeType(node.bodyDeclarations());
+		writeType(node.bodyDeclarations(), "");
 	}
 
 	public void write(EnumDeclaration node) throws Exception {
-		writeType(node.enumConstants(), node.bodyDeclarations());
+		writeType(node.enumConstants(), node.bodyDeclarations(), "");
 	}
 
 	public void write(TypeDeclaration node) throws Exception {
-		writeType(node.bodyDeclarations());
+		if (node.getJavadoc() != null) {
+			node.getJavadoc().accept(this);
+		}
+		String javaDocString = getJavadoc();
+		writeType(node.bodyDeclarations(), javaDocString);
 	}
 
-	private void writeType(List<BodyDeclaration> declarations) {
-		writeType(new ArrayList<EnumConstantDeclaration>(), declarations);
+	private void writeType(List<BodyDeclaration> declarations, String javaDoc) {
+		writeType(new ArrayList<EnumConstantDeclaration>(), declarations, javaDoc);
 	}
 
 	private void writeType(List<EnumConstantDeclaration> enums,
-			List<BodyDeclaration> declarations) {
+			List<BodyDeclaration> declarations, String javaDocString) {
 		try {
 			String body = getBody(enums, declarations);
 
 			header.write(root, body, typeInfo.closures(), typeInfo.hasClinit(),
-					typeInfo.hasInit(), unitInfo.types.keySet(), access);
+					typeInfo.hasInit(), unitInfo.types.keySet(), access, javaDocString);
 		} catch (Exception e) {
 			throw new Error(e);
 		}
@@ -439,6 +443,13 @@ public class HeaderWriter extends TransformWriter {
 		if (javaDoc == null) return;
 		out.print(javaDoc);
 		javaDoc = null;
+	}
+
+	public String getJavadoc() {
+		if (javaDoc == null) return "";
+		String javaDocString = javaDoc.toString();
+		javaDoc = null;
+		return javaDocString;
 	}
 
 	public void jdprint(String string) {

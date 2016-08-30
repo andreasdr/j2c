@@ -276,7 +276,6 @@ public class Transformer {
 				+ todo.size() + " units and " + hardDeps.size()
 				+ " dependencies pending)");
 		UnitInfo ui = new UnitInfo();
-
 		cu.accept(new TypeInfoVisitor(ui));
 
 		IPath unitRoot = getRoot(unit);

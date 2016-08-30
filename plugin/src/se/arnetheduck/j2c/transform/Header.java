@@ -66,7 +66,7 @@ public class Header {
 
 	public void write(IPath root, String body,
 			Collection<IVariableBinding> closures, boolean hasClinit,
-			boolean hasInit, Collection<ITypeBinding> nested, String access)
+			boolean hasInit, Collection<ITypeBinding> nested, String access, String javaDocString)
 			throws IOException {
 
 		this.access = access;
@@ -128,6 +128,7 @@ public class Header {
 
 			printDefaultInitTag();
 
+			print(javaDocString);
 			print(type.isInterface() ? "struct " : "class ");
 
 			print(CName.qualified(type, false));
@@ -318,7 +319,6 @@ public class Header {
 		}
 
 		println("struct " + CName.DEFAULT_INIT_TAG + ";");
-		println();
 	}
 
 	private void printDefaultInitCtor(Collection<IVariableBinding> closures) {
