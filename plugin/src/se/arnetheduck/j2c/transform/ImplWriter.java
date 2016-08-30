@@ -798,18 +798,17 @@ public class ImplWriter extends TransformWriter {
 
 		print("({");
 		if (!node.expressions().isEmpty()) {
-			String s = "";
 			ITypeBinding ct = node.resolveTypeBinding().getComponentType();
+			int expressionIdx = 0;
 			for (Expression e : (List<Expression>) node.expressions()) {
 				hardDep(e.resolveTypeBinding());
 				if (node.expressions().size() > 1) {
 					println();
 					printi(TransformUtil.indent(1));
 				}
-
-				print(s);
-				s = ", ";
 				arrayInitCast(ct, e);
+				if (expressionIdx < node.expressions().size() - 1) print(",");
+				expressionIdx++;
 			}
 		}
 
