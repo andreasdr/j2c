@@ -305,8 +305,11 @@ public final class TransformUtil {
 	 * chance to initialize the class before variable access
 	 */
 	public static boolean asMethod(IVariableBinding vb) {
+		/*
 		return vb.isField() && isStatic(vb) && constexprValue(vb) == null
 				&& !vb.isEnumConstant();
+		*/
+		return false;
 	}
 
 	public static String checkConstant(Object cv) {
