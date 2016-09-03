@@ -220,7 +220,7 @@ public class ImplWriter extends TransformWriter {
 			return;
 		}
 
-		println("void " + qcname + "::" + CName.INSTANCE_INIT + "()");
+		println("void " + name + "::" + CName.INSTANCE_INIT + "()");
 		println("{");
 		printInitInfo(info);
 		println("}");
@@ -262,7 +262,7 @@ public class ImplWriter extends TransformWriter {
 		boolean hasEmpty = false;
 		for (MethodDeclaration md : constructors) {
 			locals.add(new ArrayList<String>());
-			printi(qcname + "::" + name + "(");
+			printi(name + "::" + name + "(");
 
 			String sep = TransformUtil.printExtraCtorParams(ctx, out, type,
 					typeInfo.closures(), deps, false, md.resolveBinding());
@@ -336,7 +336,7 @@ public class ImplWriter extends TransformWriter {
 		for (IMethodBinding mb : anonCtors) {
 			locals.add(new ArrayList<String>());
 
-			printi(qcname + "::" + name + "(");
+			printi(name + "::" + name + "(");
 
 			String sep = TransformUtil.printExtraCtorParams(ctx, out, type,
 					typeInfo.closures(), deps, false, mb);
@@ -355,7 +355,7 @@ public class ImplWriter extends TransformWriter {
 		if (anonCtors.isEmpty()) {
 			locals.add(new ArrayList<String>());
 
-			printi(qcname + "::" + name + "(");
+			printi(name + "::" + name + "(");
 
 			TransformUtil.printExtraCtorParams(ctx, out, type,
 					typeInfo.closures(), deps, false, null);
@@ -402,7 +402,7 @@ public class ImplWriter extends TransformWriter {
 			return;
 		}
 
-		print(qcname + "::" + name + "(");
+		print(name + "::" + name + "(");
 		TransformUtil.printExtraCtorParams(ctx, out, type, typeInfo.closures(),
 				deps, true, null);
 		println(")");
@@ -424,7 +424,7 @@ public class ImplWriter extends TransformWriter {
 			return;
 		}
 
-		print(qcname + "::" + name + "(");
+		print(name + "::" + name + "(");
 		TransformUtil.printExtraCtorParams(ctx, out, type, typeInfo.closures(),
 				deps, false, null);
 		println(")");
@@ -442,7 +442,7 @@ public class ImplWriter extends TransformWriter {
 		println();
 
 		if (TransformUtil.needsEmptyCtor(hasEmpty, typeInfo.hasInit(), type)) {
-			print("void " + qcname + "::" + CName.CTOR + "(");
+			print("void " + name + "::" + CName.CTOR + "(");
 			TransformUtil.printEnumCtorParams(ctx, out, type, "", deps);
 			println(")");
 			println("{");
@@ -1241,7 +1241,7 @@ public class ImplWriter extends TransformWriter {
 
 	@Override
 	public boolean visit(EnumConstantDeclaration node) {
-		print(qcname + "* " + qcname + "::");
+		print(name + "* " + qcname + "::");
 
 		node.getName().accept(this);
 
@@ -1330,7 +1330,7 @@ public class ImplWriter extends TransformWriter {
 				ITypeBinding tb = vb.getType();
 				print(TransformUtil.varTypeCName(vb.getModifiers(), tb, deps));
 
-				println("& " + qcname + "::" + CName.of(vb) + "()");
+				println("& " + name + "::" + CName.of(vb) + "()");
 				printlni("{");
 				indent++;
 				printlni("clinit();");
@@ -1347,7 +1347,7 @@ public class ImplWriter extends TransformWriter {
 
 			print(" ");
 
-			print(qcname + "::");
+			print(name + "::");
 
 			if (asMethod) {
 				println(CName.of(vb) + "_;");
@@ -1698,7 +1698,7 @@ public class ImplWriter extends TransformWriter {
 		if (node.isConstructor()) {
 			constructors.add(node);
 
-			printi("void " + qcname + "::" + CName.CTOR + "(");
+			printi("void " + name + "::" + CName.CTOR + "(");
 
 			String sep = TransformUtil.printEnumCtorParams(ctx, out, type, "",
 					deps);
@@ -1710,7 +1710,7 @@ public class ImplWriter extends TransformWriter {
 			softDep(rt);
 			print(TransformUtil.qualifiedRef(rt, false) + " ");
 
-			print(qcname + "::");
+			print(name + "::");
 
 			node.getName().accept(this);
 
