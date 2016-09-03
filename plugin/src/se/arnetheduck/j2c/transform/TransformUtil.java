@@ -87,6 +87,18 @@ public final class TransformUtil {
 				.of(pkg) + "." + CName.of(tb));
 	}
 
+	public static String qualifiedNamespace(ITypeBinding tb) {
+		IPackageBinding pkg = elementPackage(tb);
+		return pkg == null || pkg.getName().isEmpty() ? CName.of(tb) : (CName
+				.of(pkg) + "." + CName.qualifiedClassName(tb));
+	}
+
+	public static String qualifiedNamespaceArray(ITypeBinding tb) {
+		IPackageBinding pkg = elementPackage(tb);
+		return pkg == null || pkg.getName().isEmpty() ? CName.of(tb) : (CName
+				.of(pkg) + "." + CName.of(tb));
+	}
+
 	/** The type of a variable, taking volatile into account */
 	public static String varTypeCName(int modifiers, ITypeBinding tb,
 			ITypeBinding type, DepInfo deps) {
@@ -141,6 +153,18 @@ public final class TransformUtil {
 		return "#include <" + s + ">";
 	}
 
+	public static String using(ITypeBinding tb) {
+		String includeName = includeName(tb);
+		if (includeName != null) {
+			return using(includeName);
+		}
+		return null;
+	}
+
+	public static String using(String s) {
+		return "using " + s + ";";
+	}
+
 	public static IPath headerPath(IPath root, ITypeBinding tb) {
 		return headerPath(root, headerName(tb));
 	}
@@ -163,6 +187,20 @@ public final class TransformUtil {
 		return toFileName(qualifiedName(tb)) + ".hpp";
 	}
 
+	public static String includeName(ITypeBinding tb) {
+		if (tb.isArray()) {
+			ITypeBinding ct = tb.getComponentType();
+			if (ct.isPrimitive()) {
+				return null;
+			} else if (TransformUtil.same(ct, Object.class)) {
+				return null;
+			}
+			return null;
+		}
+
+		return toNamespace(qualifiedName(tb));
+	}
+
 	public static IPath implPath(IPath root, ITypeBinding tb, String suffix) {
 		return root.append(suffix.length() == 0 ? "src" : suffix).append(
 				implName(tb, suffix));
@@ -183,6 +221,17 @@ public final class TransformUtil {
 	private static String toFileName(String s) {
 		// Annoying character to escape
 		return s.replaceAll("\\$", "_").replaceAll("\\.", "/");
+	}
+
+	public static String toNamespace(String s) {
+		// Annoying character to escape
+		if (s.indexOf('<') != -1) {
+			s = s.substring(0, s.indexOf('<'));
+		}
+		if (s.startsWith("[L")) {
+			s = s.substring(2);
+		}
+		return s.replaceAll("\\$", "_").replaceAll("\\.", "::");
 	}
 
 	/** JLS §4.12.5 Initial Values of Variables */
@@ -558,7 +607,7 @@ public final class TransformUtil {
 	}
 
 	public static String qualifiedRef(ITypeBinding tb, boolean global) {
-		return CName.qualified(tb, global) + ref(tb);
+		return CName.qualifiedShort(tb, global) + ref(tb);
 	}
 
 	public static String relativeRef(ITypeBinding tb, ITypeBinding root,
@@ -976,7 +1025,7 @@ public final class TransformUtil {
 		if (mb.isConstructor()) {
 			pw.print("void ");
 			if (qualified) {
-				pw.print(CName.qualified(type, true));
+				pw.print(CName.qualifiedShort(type, true));
 				pw.print("::");
 			}
 
@@ -998,7 +1047,7 @@ public final class TransformUtil {
 			pw.print(" ");
 
 			if (qualified) {
-				pw.print(CName.qualified(type, false));
+				pw.print(CName.qualifiedShort(type, false));
 				pw.print("::");
 			}
 

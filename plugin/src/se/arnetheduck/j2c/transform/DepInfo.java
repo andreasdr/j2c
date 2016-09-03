@@ -187,7 +187,7 @@ public class DepInfo {
 		out.print("typedef ::SubArray< " + CName.qualified(ct, true));
 
 		for (ITypeBinding base : bases) {
-			out.print(", " + CName.relative(base, ct, true));
+			out.print(", " + CName.relativeQualified(base, ct, true));
 		}
 
 		out.println(" > " + CName.of(dep) + ";");

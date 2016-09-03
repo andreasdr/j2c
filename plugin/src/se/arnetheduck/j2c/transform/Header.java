@@ -82,6 +82,7 @@ public class Header {
 			println();
 
 			Set<String> includes = new HashSet<String>();
+			Set<String> usings = new HashSet<String>();
 
 			if (type.getQualifiedName().equals(String.class.getName())) {
 				printlnd("#include <stddef.h>", includes);
@@ -120,12 +121,55 @@ public class Header {
 				printlnd(TransformUtil.include(dep), includes);
 			}
 
-			if (!includes.isEmpty()) {
+			println();
+			for (ITypeBinding dep : bases) {
+				if (dep.isEqualTo(type)) {
+					continue;
+				}
+
+				if (dep.isNullType() || dep.isPrimitive()) {
+					continue;
+				}
+
+				String qualifiedName = dep.getQualifiedName();
+				if (qualifiedName.lastIndexOf(".") == -1) {
+					continue;
+				}
+	
+				printlnd(TransformUtil.using(TransformUtil.toNamespace(TransformUtil.qualifiedNamespace(dep))), usings);
+			}
+			Set<String> arrayUsings = new TreeSet<String>();
+			for (ITypeBinding dep : deps.getSoftDeps()) {
+				if (dep.isEqualTo(type)) {
+					continue;
+				}
+
+				if (dep.isNullType() || dep.isPrimitive()) {
+					continue;
+				}
+
+				String qualifiedName = dep.getQualifiedName();
+				if (qualifiedName.lastIndexOf(".") == -1) {
+					continue;
+				}
+
+				printlnd(TransformUtil.using(TransformUtil.toNamespace(TransformUtil.qualifiedNamespace(dep))), usings);
+				if (dep.isArray()) {
+					arrayUsings.add(TransformUtil.using(TransformUtil.toNamespace(TransformUtil.qualifiedNamespaceArray(dep))));
+				}
+			}
+
+			if (!usings.isEmpty()) {
 				println();
 			}
 
 			deps.printArrays(out);
 
+			for (String s: arrayUsings) {
+				printlnd(s, usings);
+			}
+			println();
+			
 			printDefaultInitTag();
 
 			print(javaDocString);

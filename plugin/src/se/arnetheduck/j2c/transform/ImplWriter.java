@@ -792,7 +792,7 @@ public class ImplWriter extends TransformWriter {
 		if (!(node.getParent() instanceof ArrayCreation)) {
 			print("(new ");
 			ITypeBinding at = node.resolveTypeBinding();
-			print(CName.qualified(at, true));
+			print(CName.qualifiedShort(at, true));
 			hardDep(at);
 		}
 
@@ -1249,7 +1249,7 @@ public class ImplWriter extends TransformWriter {
 				: node.getAnonymousClassDeclaration().resolveBinding();
 
 		hardDep(tb);
-		print(" = new " + CName.qualified(tb, true));
+		print(" = new " + CName.qualifiedShort(tb, true));
 
 		EnumDeclaration enumDeclaration = (EnumDeclaration) node.getParent();
 

@@ -78,7 +78,61 @@ public class CName {
 						+ "." + of(tb))).replace(".", "::");
 	}
 
+	public static String qualifiedShort(ITypeBinding tb, boolean global) {
+		IPackageBinding pkg = TransformUtil.elementPackage(tb);
+		String qualifiedName = (global && !tb.isPrimitive() ? "::" : "")
+				+ (pkg == null || pkg.getName().isEmpty() ? of(tb) : (of(pkg)
+						+ "." + of(tb))).replace(".", "::");
+		return
+			qualifiedName.lastIndexOf("::") == -1?qualifiedName:
+			qualifiedName.substring(qualifiedName.lastIndexOf("::") + 2, qualifiedName.length());
+	}
+
 	public static String relative(ITypeBinding tb, ITypeBinding root,
+			boolean global) {
+		if (!samePackage(tb, root)) {
+			return qualifiedShort(tb, global);
+		}
+
+		String tbn = of(tb);
+		if (tbn.equals(Object.class.getSimpleName())
+				&& !TransformUtil.same(tb, Object.class)) {
+			// Intefaces have null superclass but inherit (conceptually) from
+			// Object
+			return qualifiedShort(tb, global);
+		}
+
+		// Clash between method and type name
+		for (IMethodBinding mb : root.getDeclaredMethods()) {
+			if (!mb.isConstructor() && of(mb).equals(tbn)) {
+				return qualifiedShort(tb, global);
+			}
+		}
+
+		// Clash between field and type name
+		for (IVariableBinding vb : root.getDeclaredFields()) {
+			if (of(vb).equals(tbn)) {
+				return qualifiedShort(tb, global);
+			}
+		}
+
+		// In C++, unqualified names in a class are looked up in base
+		// classes before the own namespace
+		List<ITypeBinding> bases = TypeUtil.allBases(root, null);
+		for (ITypeBinding sb : bases) {
+			if (tb.getErasure().isEqualTo(sb.getErasure())) {
+				return tbn;
+			}
+
+			if (of(sb).equals(tbn)) {
+				return qualifiedShort(tb, global);
+			}
+		}
+
+		return tbn;
+	}
+
+	public static String relativeQualified(ITypeBinding tb, ITypeBinding root,
 			boolean global) {
 		if (!samePackage(tb, root)) {
 			return qualified(tb, global);
@@ -211,6 +265,49 @@ public class CName {
 
 		cache.put(tb, name);
 		cache.put(tbe, name);
+
+		return name;
+	}
+	
+	public static String qualifiedClassName(ITypeBinding tb) {
+		String name = null;
+		ITypeBinding tbe = tb.getErasure();
+		if (tb.isArray()) {
+			name = qualifiedClassName(tb.getComponentType());
+		} else if (tb.isPrimitive()) {
+			name = TransformUtil.primitive(tb.getName());
+		} else if (tbe.isLocal()) {
+			StringBuilder ret = new StringBuilder();
+
+			Matcher match = bin.matcher(tbe.getBinaryName());
+			String sep = "";
+
+			if (tbe.getDeclaringClass() != null) {
+				ret.append(qualifiedClassName(tbe.getDeclaringClass()));
+				sep = "_";
+			}
+
+			if (tbe.getDeclaringMethod() != null
+					&& tbe.getDeclaringMethod().getName().length() > 0) {
+				ret.append(sep + tbe.getDeclaringMethod().getName());
+				sep = "_";
+			}
+
+			if (tbe.getName() != null && tbe.getName().length() > 0) {
+				ret.append(sep + tbe.getName());
+				sep = "_";
+			}
+
+			while (match.find()) {
+				ret.append(match.group(0).replaceAll("\\$", "_"));
+			}
+
+			name = ret.toString();
+		} else if (tbe.isNested()) {
+			name = qualifiedClassName(tbe.getDeclaringClass()) + "_" + tbe.getName();
+		} else {
+			name = keywords(tbe.getName());
+		}
 
 		return name;
 	}

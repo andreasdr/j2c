@@ -104,9 +104,11 @@ public class Impl {
 
 	private void printIncludes() {
 		Set<String> includes = new HashSet<String>();
+		Set<String> using = new HashSet<String>();
 		printlnd(TransformUtil.include(type), includes);
 		println();
 
+		// includes
 		for (ITypeBinding dep : deps.getHardDeps()) {
 			if (dep.isEqualTo(type)) {
 				continue;
@@ -115,7 +117,7 @@ public class Impl {
 			if (dep.isNullType() || dep.isPrimitive()) {
 				continue;
 			}
-
+			
 			printlnd(TransformUtil.include(dep), includes);
 		}
 
@@ -126,6 +128,25 @@ public class Impl {
 		if (includes.size() > 1) {
 			println();
 		}
+
+		// using
+		printlnd(TransformUtil.using(type), using);
+		for (ITypeBinding dep : deps.getHardDeps()) {
+			if (dep.isEqualTo(type)) {
+				continue;
+			}
+
+			if (dep.isNullType() || dep.isPrimitive()) {
+				continue;
+			}
+
+			printlnd(TransformUtil.using(dep), using);
+		}
+
+		if (using.size() > 1) {
+			println();
+		}
+
 	}
 
 	private void printClinit(String cinit, String clinit) {
@@ -487,6 +508,7 @@ public class Impl {
 	}
 
 	public void printlnd(String s, Set<String> printed) {
+		if (s == null) return;
 		if (printed.add(s)) {
 			println(s);
 		}
