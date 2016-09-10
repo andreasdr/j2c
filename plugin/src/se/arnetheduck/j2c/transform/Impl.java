@@ -17,10 +17,10 @@ import org.eclipse.jdt.core.dom.IVariableBinding;
 import org.eclipse.jdt.core.dom.Modifier;
 
 public class Impl {
-	private static final String JAVA_CAST_HPP = "/se/arnetheduck/j2c/resources/java_cast.hpp";
-	private static final String NPC_HPP = "/se/arnetheduck/j2c/resources/npc.hpp";
-	private static final String FINALLY_HPP = "/se/arnetheduck/j2c/resources/finally.hpp";
-	private static final String SYNCHRONIZED_HPP = "/se/arnetheduck/j2c/resources/synchronized.hpp";
+	private static final String JAVA_CAST_HPP = "/se/arnetheduck/j2c/resources/java_cast.h";
+	private static final String NPC_HPP = "/se/arnetheduck/j2c/resources/npc.h";
+	private static final String FINALLY_HPP = "/se/arnetheduck/j2c/resources/finally.h";
+	private static final String SYNCHRONIZED_HPP = "/se/arnetheduck/j2c/resources/synchronized.h";
 
 	private static final String i1 = TransformUtil.indent(1);
 	private static final String i2 = TransformUtil.indent(2);

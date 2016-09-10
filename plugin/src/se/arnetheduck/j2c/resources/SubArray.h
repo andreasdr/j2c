@@ -3,8 +3,8 @@
 #include <iterator>
 #include <utility>
 
-#include <ObjectArray.hpp>
-#include <java/lang/ArrayStoreException.hpp>
+#include <ObjectArray.h>
+#include <java/lang/ArrayStoreException.h>
 
 template<typename ComponentType, typename... Bases>
 struct SubArray : public virtual Bases... {

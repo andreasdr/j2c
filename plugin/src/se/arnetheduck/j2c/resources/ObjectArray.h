@@ -3,9 +3,9 @@
 #include <initializer_list>
 #include <type_traits>
 
-#include <java/lang/Object.hpp>
-#include <java/lang/Cloneable.hpp>
-#include <java/io/Serializable.hpp>
+#include <java/lang/Object.h>
+#include <java/lang/Cloneable.h>
+#include <java/io/Serializable.h>
 
 namespace java
 {

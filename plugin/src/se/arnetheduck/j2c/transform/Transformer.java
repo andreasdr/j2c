@@ -38,9 +38,9 @@ import se.arnetheduck.j2c.snippets.GetSetSnippet;
 import se.arnetheduck.j2c.snippets.ReplaceInvocation;
 
 public class Transformer {
-	private static final String ARRAY_HPP = "/se/arnetheduck/j2c/resources/Array.hpp";
-	private static final String OBJECT_ARRAY_HPP = "/se/arnetheduck/j2c/resources/ObjectArray.hpp";
-	private static final String SUB_ARRAY_HPP = "/se/arnetheduck/j2c/resources/SubArray.hpp";
+	private static final String ARRAY_HPP = "/se/arnetheduck/j2c/resources/Array.h";
+	private static final String OBJECT_ARRAY_HPP = "/se/arnetheduck/j2c/resources/ObjectArray.h";
+	private static final String SUB_ARRAY_HPP = "/se/arnetheduck/j2c/resources/SubArray.h";
 
 	private final IJavaProject project;
 
@@ -130,11 +130,11 @@ public class Transformer {
 	private void writeResources() throws IOException {
 		// TODO Auto-generated method stub
 		FileUtil.writeResource(ARRAY_HPP,
-				TransformUtil.headerPath(root, "Array.hpp").toFile());
+				TransformUtil.headerPath(root, "Array.h").toFile());
 		FileUtil.writeResource(OBJECT_ARRAY_HPP,
-				TransformUtil.headerPath(root, "ObjectArray.hpp").toFile());
+				TransformUtil.headerPath(root, "ObjectArray.h").toFile());
 		FileUtil.writeResource(SUB_ARRAY_HPP,
-				TransformUtil.headerPath(root, "SubArray.hpp").toFile());
+				TransformUtil.headerPath(root, "SubArray.h").toFile());
 	}
 
 	public String getName() {
@@ -181,7 +181,7 @@ public class Transformer {
 						|| f.getName().endsWith(".a")) {
 					f.delete();
 				} else if (f.getName().equals("Makefile")
-						|| f.getName().endsWith(".hpp")
+						|| f.getName().endsWith(".h")
 						|| f.getName().endsWith(".cpp")) {
 					File tf = new File(to, f.getName());
 

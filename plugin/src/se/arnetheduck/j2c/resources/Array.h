@@ -3,9 +3,9 @@
 #include <initializer_list>
 #include <stdint.h>
 
-#include <java/lang/Object.hpp>
-#include <java/lang/Cloneable.hpp>
-#include <java/io/Serializable.hpp>
+#include <java/lang/Object.h>
+#include <java/lang/Cloneable.h>
+#include <java/io/Serializable.h>
 
 extern java::lang::Class *class_(const char16_t *c, int n);
 

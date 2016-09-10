@@ -78,7 +78,7 @@ public final class TransformUtil {
 		String prefix = packageName == null || packageName.isEmpty() ? ""
 				: toFileName(packageName) + "/";
 
-		return prefix + "fwd-" + project + ".hpp";
+		return prefix + "fwd-" + project + ".h";
 	}
 
 	public static String qualifiedName(ITypeBinding tb) {
@@ -177,14 +177,14 @@ public final class TransformUtil {
 		if (tb.isArray()) {
 			ITypeBinding ct = tb.getComponentType();
 			if (ct.isPrimitive()) {
-				return "Array.hpp";
+				return "Array.h";
 			} else if (TransformUtil.same(ct, Object.class)) {
-				return "ObjectArray.hpp";
+				return "ObjectArray.h";
 			}
-			return "SubArray.hpp";
+			return "SubArray.h";
 		}
 
-		return toFileName(qualifiedName(tb)) + ".hpp";
+		return toFileName(qualifiedName(tb)) + ".h";
 	}
 
 	public static String includeName(ITypeBinding tb) {
