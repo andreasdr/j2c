@@ -1,5 +1,8 @@
-This is our adaption of J2C to improve automatic code compilation for the TDME->TDMECPP port
+This is our adaption of J2C to improve automatic code compilation for the TDME->TDME2 port
 ---------------------------------------------------------------------------------------------
+
+Note: The port using J2C is finished, check its success story here:
+http://drewke.net/dnwp/tdme2-the-port-of-my-java-based-3d-engine-to-c11-using-j2c/?lang=en
 
 Introduction
 --
